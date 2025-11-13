@@ -1,0 +1,155 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body and Layout */
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+/* Header (Banner) */
+header {
+    background: #333;
+    color: white;
+    padding: 20px 0;
+    text-align: center;
+    position: relative;
+}
+
+.banner h1 {
+    margin: 0;
+}
+
+/* Top Navigation Bar */
+.navbar {
+    background-color: #444;
+    padding: 10px 0;
+}
+
+.navbar nav {
+    display: flex;
+    justify-content: space-between;
+    text-align: center;
+}
+
+.navbar nav > * {
+    flex: 1;
+    text-align: center;
+}
+
+/* Navbar Links and Buttons */
+.navbar a,
+.navbar form button {
+    background-color: grey;
+    color: white;
+    padding: 8px 16px;
+    text-decoration: none;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: inline-block;
+    width: 80%; /* Slight padding inside each flex item */
+}
+
+.navbar a:hover,
+.navbar form button:hover {
+    background-color: #666;
+}
+
+/* Search Form Styling */
+.navbar form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+}
+
+.navbar form input[type="text"] {
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    width: 60%;
+}
+
+/* Container for Sidebar and Content */
+.container {
+    display: flex;
+    min-height: 80vh;
+    padding: 20px;
+}
+
+/* Sidebar (Main Menu) */
+.sidebar {
+    width: 200px;
+    background-color: #333;
+    color: white;
+    padding: 20px;
+    flex-shrink: 0;
+}
+
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    margin: 10px 0;
+}
+
+.sidebar ul li a {
+    display: block;
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    text-transform: uppercase;
+    font-weight: bold;
+    padding: 10px;
+    background-color: #444;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.sidebar ul li a:hover {
+    background-color: #555;
+}
+
+/* Main Content */
+.content {
+    flex-grow: 1;
+    margin-left: 20px;
+}
+
+.content section {
+    margin-bottom: 20px;
+}
+
+.content h2 {
+    color: #333;
+}
+
+.content p {
+    font-size: 1.1em;
+    line-height: 1.6;
+}
+
+/* Footer */
+footer {
+    background: #333;
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    margin-top: 20px;
+}
+
+footer p {
+    font-size: 14px;
+}

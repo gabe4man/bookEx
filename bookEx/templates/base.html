@@ -1,0 +1,55 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Book Management System{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'base.css' %}" type="text/css">
+</head>
+<body>
+    <header>
+        <span style="float: right; margin-right: 20px;">
+            {% if user.is_authenticated %}
+                {{ user.username }}
+                <form action="{% url 'logout' %}?next=/" method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit">Logout</button>
+                </form>
+            {% else %}
+                Not Logged in
+                <a href="{% url 'login' %}?next=/">Login</a>
+            {% endif %}
+        </span>
+        </header>
+    <header>
+        <div class="banner">
+            <h1>My Website Banner</h1>
+        </div>
+        <div class="navbar">
+            <nav>
+                <a href="{% url 'postbook' %}">Post Book</a>
+                <a href="{% url 'displaybooks' %}">Display Books</a>
+                <a href="{% url 'aboutus' %}">About Us</a>
+                <a href="{% url 'mybooks' %}">My Books</a>
+                <form action="{% url 'search_books' %}" method="get">
+                    <input type="text" name="q" placeholder="Search books..." required>
+                    <button type="submit">Search</button>
+                </form>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+
+        <main class="content">
+            {% block content %}
+            {% endblock %}
+        </main>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 My Web Layout</p>
+    </footer>
+</body>
+</html>
