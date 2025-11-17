@@ -5,39 +5,47 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Book Management System{% endblock %}</title>
+    
     <link rel="stylesheet" href="{% static 'base.css' %}" type="text/css">
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
     <header>
-        <span style="float: right; margin-right: 20px;">
-            {% if user.is_authenticated %}
-                {{ user.username }}
-                <form action="{% url 'logout' %}?next=/" method="post" style="display: inline;">
-                    {% csrf_token %}
-                    <button type="submit">Logout</button>
-                </form>
-            {% else %}
-                Not Logged in
-                <a href="{% url 'login' %}?next=/">Login</a>
-            {% endif %}
-        </span>
-        </header>
-    <header>
-        <div class="banner">
-            <h1>My Website Banner</h1>
+        <div class="banner bg-primary text-white">
+            <h1>The Bookstore</h1>
+            
         </div>
-        <div class="navbar">
-            <nav>
-                <a href="{% url 'postbook' %}">Post Book</a>
-                <a href="{% url 'displaybooks' %}">Display Books</a>
-                <a href="{% url 'aboutus' %}">About Us</a>
-                <a href="{% url 'mybooks' %}">My Books</a>
-                <form action="{% url 'search_books' %}" method="get">
-                    <input type="text" name="q" placeholder="Search books..." required>
-                    <button type="submit">Search</button>
+        <nav class="navbar navbar-expand-lg navbar-light bg-dark">
+            <nav class="d-flex align-items-center">
+                <a class="mx-3 py-2 btn btn-outline-light mx-2" href="{% url 'postbook' %}">Post Book</a>
+                <a class="mx-3 py-2 btn btn-outline-light mx-2" href="{% url 'displaybooks' %}">Display Books</a>
+                <a class="mx-3 py-2 btn btn-outline-light mx-2" href="{% url 'aboutus' %}">About Us</a>
+                <a class="mx-3 py-2 btn btn-outline-light mx-2" href="{% url 'mybooks' %}">My Books</a>
+
+                <form action="{% url 'search_books' %}" method="get" class="d-flex ms-auto">
+                    <input type="text" name="q" placeholder="Search books..." required 
+                        class="form-control form-control-sm me-2" style="width:200px;">
+                    <button type="submit" class="btn btn-primary btn-sm">Search</button>
                 </form>
             </nav>
-        </div>
+                <div class="ms-auto d-flex align-items-center gap-2">
+                    {% if user.is_authenticated %}
+                        <span>{{ user.username }}</span>
+
+                        <form action="{% url 'logout' %}?next=/" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Logout</button>
+                        </form>
+                    {% else %}
+                        <span>Not Logged In</span>
+                        <a href="{% url 'login' %}?next=/" class="btn btn-sm btn-primary">Login</a>
+                    {% endif %}
+                </div>
+        </nav>
     </header>
 
     <div class="container">

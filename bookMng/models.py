@@ -17,6 +17,13 @@ class Book(models.Model):
     pic_path = models.CharField(max_length=300, editable=False, blank=True)
     username = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE)
 
+    @property
+    def average_rating(self):
+        ratings = self.ratings.all()
+        if ratings.exists():
+            return round(sum(r.stars for r in ratings) / ratings.count(), 1)
+        return 0
+
     def __str__(self):
         return self.name
 
@@ -26,9 +33,24 @@ class Comment(models.Model):
     text = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
-class Reply(models.Model):
-    comment = models.ForeignKey(Comment, on_delete=models.CASCADE, related_name='replies')
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    text = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
+    parent = models.ForeignKey(
+        'self',
+        null=True,
+        blank=True,
+        related_name='replies',
+        on_delete=models.CASCADE
+    )
 
+    def is_reply(self):
+        return self.parent is not None
+
+class Rating(models.Model):
+    book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name='ratings')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    stars = models.PositiveSmallIntegerField()  # [1, 5]
+    
+    class Meta:
+        unique_together = ('book', 'user')  # Unique to users + book
+
+    def __str__(self):
+        return f"{self.user.username} rated {self.book.name}: {self.stars} stars"
