@@ -9,7 +9,8 @@ from .forms import BookForm, CommentForm, ReplyForm, RatingForm
 
 def index(request):
     return render(request, 'bookMng/index.html', {
-        'item_list': MainMenu.objects.all()
+        'item_list': MainMenu.objects.all(),
+        'user':request.user
     })
 
 def postbook(request):
@@ -40,6 +41,8 @@ def displaybooks(request):
         'item_list': MainMenu.objects.all(),
         'books': books
     })
+
+
 
 
 class Register(CreateView):
@@ -165,6 +168,19 @@ def search_books(request):
         'item_list': MainMenu.objects.all(),
         'query': query,
         'results': results
+    })
+
+def search_books(request):
+    query = request.GET.get('q', '')
+    results = []
+
+    if query:
+        results = Book.objects.filter(name__icontains=query)
+
+    return render(request, 'bookMng/search_results.html', {
+        'item_list': MainMenu.objects.all(),
+        'query': query,
+        'results': results,
     })
 
 @property
