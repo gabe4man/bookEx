@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import ModelForm
-from .models import Book, Comment, Reply
+from .models import Book, Comment
 
 class BookForm(ModelForm):
     class Meta:
@@ -17,8 +17,10 @@ class CommentForm(ModelForm):
         model = Comment
         fields = ['text']
 
-class ReplyForm(ModelForm):
+class ReplyForm(forms.ModelForm):
     class Meta:
-        model = Reply
+        model = Comment
         fields = ['text']
-
+        widgets = {
+            'text': forms.Textarea(attrs={'rows': 2, 'class': 'form-control', 'placeholder': 'Write a reply...'})
+        }
