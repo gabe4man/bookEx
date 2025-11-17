@@ -17,6 +17,13 @@ class Book(models.Model):
     pic_path = models.CharField(max_length=300, editable=False, blank=True)
     username = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE)
 
+    @property
+    def average_rating(self):
+        ratings = self.ratings.all()
+        if ratings.exists():
+            return round(sum(r.stars for r in ratings) / ratings.count(), 1)
+        return 0
+
     def __str__(self):
         return self.name
 

@@ -3,8 +3,8 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic.edit import CreateView
 from django.contrib.auth.forms import UserCreationForm
 from django.urls import reverse_lazy
-from .models import MainMenu, Book, Comment
-from .forms import BookForm, CommentForm, ReplyForm
+from .models import MainMenu, Book, Comment, Rating
+from .forms import BookForm, CommentForm, ReplyForm, RatingForm
 
 
 def index(request):
@@ -51,48 +51,6 @@ class Register(CreateView):
         form.save()
         return HttpResponseRedirect(self.success_url)
 
-def book_detail(request, pk):
-    book = get_object_or_404(Book, pk=pk)
-
-    # Only top-level comments in main list
-    comments = book.comments.filter(parent__isnull=True).order_by('-created_at')
-
-    # Comment form
-    comment_form = CommentForm()
-    reply_form = ReplyForm()
-
-    if request.method == "POST":
-        # ----- New comment -----
-        if "comment_submit" in request.POST:
-            form = CommentForm(request.POST)
-            if form.is_valid():
-                new_comment = form.save(commit=False)
-                new_comment.book = book
-                new_comment.user = request.user
-                new_comment.save()
-                return redirect('book_detail', pk=pk)
-
-        # ----- New reply -----
-        if "reply_submit" in request.POST:
-            parent_id = request.POST.get("parent_comment_id")
-            parent_comment = Comment.objects.get(id=parent_id)
-
-            form = ReplyForm(request.POST)
-            if form.is_valid():
-                reply = form.save(commit=False)
-                reply.book = book
-                reply.user = request.user
-                reply.parent = parent_comment      # ← THE IMPORTANT PART
-                reply.save()
-                return redirect('book_detail', pk=pk)
-
-    return render(request, "book_detail.html", {
-        "book": book,
-        "comments": comments,
-        "comment_form": comment_form,
-        "reply_form": reply_form,
-    })
-
 def book_detail(request, book_id):
     book = get_object_or_404(Book, id=book_id)
     book.pic_path = book.picture.url[14:]
@@ -107,12 +65,16 @@ def book_detail(request, book_id):
     # Default empty forms
     comment_form = CommentForm()
     reply_form = CommentForm()  # reply uses same Comment model
+    rating_form = RatingForm()
 
+    # Get user’s existing rating (if any)
+    user_rating = None
+    if request.user.is_authenticated:
+        user_rating = Rating.objects.filter(book=book, user=request.user).first()
+        
     if request.method == 'POST':
 
-        # ---------------------
         # Create a new comment
-        # ---------------------
         if 'comment_submit' in request.POST:
             comment_form = CommentForm(request.POST)
             if comment_form.is_valid():
@@ -122,9 +84,7 @@ def book_detail(request, book_id):
                 comment.save()
                 return redirect('book_detail', book_id=book.id)
 
-        # ---------------------
         # Create a new reply
-        # ---------------------
         elif 'reply_submit' in request.POST:
             reply_form = CommentForm(request.POST)
             if reply_form.is_valid():
@@ -134,10 +94,32 @@ def book_detail(request, book_id):
                 reply = reply_form.save(commit=False)
                 reply.book = book
                 reply.user = request.user
-                reply.parent = parent_comment   # <-- IMPORTANT PART
+                reply.parent = parent_comment
                 reply.save()
 
                 return redirect('book_detail', book_id=book.id)
+
+        # Add rating
+        elif 'rating_submit' in request.POST:
+            rating_form = RatingForm(request.POST)
+            if rating_form.is_valid():
+                stars = rating_form.cleaned_data['stars']
+                Rating.objects.update_or_create(
+                    book=book,
+                    user=request.user,
+                    defaults={'stars': stars},
+                )
+                return redirect('book_detail', book_id=book.id)
+    rating = book.average_rating
+    rating_string = ""
+    for i in range(0,5):
+        delta = round(2*(rating - i))
+        if delta >= 2:
+            rating_string += "🌕"
+        elif delta == 1:
+            rating_string += "🌗"
+        else:
+            rating_string += "🌑"
 
     return render(request, 'bookMng/book_detail.html', {
         'item_list': MainMenu.objects.all(),
@@ -145,6 +127,9 @@ def book_detail(request, book_id):
         'comments': comments,
         'comment_form': comment_form,
         'reply_form': reply_form,
+        'rating_form': rating_form,
+        'user_rating': user_rating,
+        'rating_string': rating_string,
     })
 
 

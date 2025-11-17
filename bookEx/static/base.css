@@ -5,6 +5,22 @@
     box-sizing: border-box;
 }
 
+.star-rating {
+    font-size: 2rem;
+    cursor: pointer;
+}
+
+.star-rating .star {
+    color: #ccc;          /* default gray */
+    transition: color 0.2s;
+}
+
+.star-rating .star.hovered,
+.star-rating .star.selected {
+    color: gold;
+}
+
+
 /* Navbar */
 
 
