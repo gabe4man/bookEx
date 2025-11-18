@@ -39,6 +39,28 @@
     </tbody>
 </table>
 
+{% if user.is_authenticated %}
+    <form method="post" class="mb-3">
+        {% csrf_token %}
+
+        {% if is_favorited %}
+            <!-- Filled heart (user already favorited it) -->
+            <button type="submit" name="favorite_submit" class="btn btn-danger">
+                <i class="bi bi-heart-fill"></i> Unfavorite
+            </button>
+        {% else %}
+            <!-- Empty heart -->
+            <button type="submit" name="favorite_submit" class="btn btn-outline-danger">
+                <i class="bi bi-heart"></i> Favorite
+            </button>
+        {% endif %}
+
+    </form>
+{% else %}
+    <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-outline-secondary">
+        Log in to favorite <i class="bi bi-heart"></i>
+    </a>
+{% endif %}
 
 <p class="fs-5 mt-3">
     User Rating: {{ rating_string }}

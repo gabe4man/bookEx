@@ -54,3 +54,13 @@ class Rating(models.Model):
 
     def __str__(self):
         return f"{self.user.username} rated {self.book.name}: {self.stars} stars"
+
+class Favorite(models.Model):
+    book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name='favorited_by')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='favorites')
+
+    class Meta:
+        unique_together = ('book', 'user')
+
+    def __str__(self):
+        return f"{self.user.username} favorited {self.book.name}"

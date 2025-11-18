@@ -3,7 +3,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic.edit import CreateView
 from django.contrib.auth.forms import UserCreationForm
 from django.urls import reverse_lazy
-from .models import MainMenu, Book, Comment, Rating
+from .models import MainMenu, Book, Comment, Rating, Favorite
 from .forms import BookForm, CommentForm, ReplyForm, RatingForm
 
 
@@ -74,10 +74,12 @@ def book_detail(request, book_id):
     user_rating = None
     if request.user.is_authenticated:
         user_rating = Rating.objects.filter(book=book, user=request.user).first()
-        
+    
+    is_favorited = False
+    if request.user.is_authenticated:
+        is_favorited = Favorite.objects.filter(user=request.user, book=book).exists()
     if request.method == 'POST':
-
-        # Create a new comment
+        # Comment
         if 'comment_submit' in request.POST:
             comment_form = CommentForm(request.POST)
             if comment_form.is_valid():
@@ -87,7 +89,7 @@ def book_detail(request, book_id):
                 comment.save()
                 return redirect('book_detail', book_id=book.id)
 
-        # Create a new reply
+        # Reply
         elif 'reply_submit' in request.POST:
             reply_form = CommentForm(request.POST)
             if reply_form.is_valid():
@@ -102,7 +104,7 @@ def book_detail(request, book_id):
 
                 return redirect('book_detail', book_id=book.id)
 
-        # Add rating
+        # Rating
         elif 'rating_submit' in request.POST:
             rating_form = RatingForm(request.POST)
             if rating_form.is_valid():
@@ -113,6 +115,16 @@ def book_detail(request, book_id):
                     defaults={'stars': stars},
                 )
                 return redirect('book_detail', book_id=book.id)
+        # Favorite
+        elif 'favorite_submit' in request.POST:
+            if request.user.is_authenticated:
+                fav, created = Favorite.objects.get_or_create(user=request.user, book=book)
+                
+                if not created:
+                    # If it already existed, unfavorite it
+                    fav.delete()
+                
+            return redirect('book_detail', book_id=book.id)
     rating = book.average_rating
     rating_string = ""
     for i in range(0,5):
@@ -133,17 +145,20 @@ def book_detail(request, book_id):
         'rating_form': rating_form,
         'user_rating': user_rating,
         'rating_string': rating_string,
+        'is_favorited': is_favorited,
     })
 
 
 
 def mybooks(request):
     books = Book.objects.filter(username=request.user)
+    favorite_books = Book.objects.filter(favorited_by__user=request.user)
     for b in books:
         b.pic_path = b.picture.url[14:]
     return render(request, 'bookMng/mybooks.html', {
         'item_list': MainMenu.objects.all(),
-        'books': books
+        'books': books,
+        'favorite_books': favorite_books,
     })
 
 
@@ -160,15 +175,6 @@ def about_us(request):
         'item_list': MainMenu.objects.all()
     })
 
-
-def search_books(request):
-    query = request.GET.get('q')
-    results = Book.objects.filter(name__icontains=query) if query else []
-    return render(request, 'bookMng/search_results.html', {
-        'item_list': MainMenu.objects.all(),
-        'query': query,
-        'results': results
-    })
 
 def search_books(request):
     query = request.GET.get('q', '')
