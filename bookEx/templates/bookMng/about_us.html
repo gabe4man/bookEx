@@ -1,14 +1,45 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block sidenav %}
-
-{% endblock sidenav %}
-
 {% block content %}
-  <h1>About Us</h1>
-    <p>
-        This is a book posting and display platform project for CS3337.
-    </p>
-{% endblock content %}
 
+<div class="container mt-4">
+
+    <!-- Hero Section -->
+    <div class="text-center py-5 bg-primary text-white rounded shadow">
+        <h1 class="fw-bold">About Us</h1>
+        <p class="fs-5 mt-3">
+            Welcome to <strong>The Bookstore</strong> — your place to discover, share, and favorite books.
+        </p>
+    </div>
+
+    <!-- Mission -->
+    <section class="mt-5">
+        <h2 class="fw-bold">Our Mission</h2>
+        <p class="text-muted">
+            Here at The Bookstore, we love to foster open-minded discussion surrounding literature.
+          </br>
+            Our goal is to make it easy for users to:
+        </p>
+
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item"><i class="bi bi-book me-2 text-primary"></i> Post and display books effortlessly</li>
+            <li class="list-group-item"><i class="bi bi-chat-dots me-2 text-primary"></i> Leave comments and replies</li>
+            <li class="list-group-item"><i class="bi bi-star me-2 text-primary"></i> Rate books using a 5-star system</li>
+            <li class="list-group-item"><i class="bi bi-heart me-2 text-danger"></i> Favorite the books you love</li>
+            <li class="list-group-item"><i class="bi bi-search me-2 text-primary"></i> Search and discover new books</li>
+        </ul>
+    </section>
+
+
+    <!-- Creator Section -->
+    <section class="mt-5">
+        <h2 class="fw-bold">Who We Are</h2>
+        <p class="text-muted">
+            We are a small team passionate about bringing our vision to fruition. Our dedication to the free sharing of ideas is unparalleled by any other.
+        </p>
+    </section>
+
+</div>
+
+{% endblock content %}
