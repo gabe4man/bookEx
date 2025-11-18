@@ -15,42 +15,85 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
-    <header>
-        <div class="banner bg-primary text-white">
-            <h1>The Bookstore</h1>
-            
-        </div>
-        <nav class="navbar navbar-expand-lg navbar-light bg-dark">
-            <nav class="d-flex align-items-center">
-                <a class="mx-3 py-2 btn btn-outline-light mx-2" href="{% url 'postbook' %}">Post Book</a>
-                <a class="mx-3 py-2 btn btn-outline-light mx-2" href="{% url 'displaybooks' %}">Display Books</a>
-                <a class="mx-3 py-2 btn btn-outline-light mx-2" href="{% url 'aboutus' %}">About Us</a>
-                
+    <header class="m-0 p-0">
+
+    <!-- Banner -->
+    <div class="bg-primary text-white text-center py-3 m-0">
+        <h1 class="m-0 fw-bold">The Bookstore</h1>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark m-0 p-0">
+
+        <div class="container-fluid py-2">
+
+            <!-- Left Side: Navigation -->
+            <div class="d-flex align-items-center gap-3">
+
+                <a href="{% url 'postbook' %}" class="btn btn-outline-light btn-sm">
+                    Post Book
+                </a>
+
+                <a href="{% url 'displaybooks' %}" class="btn btn-outline-light btn-sm">
+                    Display Books
+                </a>
+
+                <a href="{% url 'aboutus' %}" class="btn btn-outline-light btn-sm">
+                    About Us
+                </a>
+
                 {% if user.is_authenticated %}
-                <a class="mx-3 py-2 btn btn-outline-light mx-2" href="{% url 'mybooks' %}">My Books</a>
+                <a href="{% url 'mybooks' %}" class="btn btn-outline-light btn-sm">
+                    My Books
+                </a>
+                {% endif %}
+            </div>
+
+
+            <!-- Right Side: Search + User -->
+            <div class="d-flex align-items-center gap-3 ms-auto">
+
+                <!-- Search -->
+                <form action="{% url 'search_books' %}" method="get" class="d-flex">
+                    <input type="text" 
+                           name="q" 
+                           placeholder="Search books..."
+                           required
+                           class="form-control form-control-sm me-2"
+                           style="width: 200px;">
+                    <button type="submit" class="btn btn-primary btn-sm">
+                        Search
+                    </button>
+                </form>
+
+                <!-- User -->
+                {% if user.is_authenticated %}
+                    <span class="text-white fw-semibold">
+                        {{ user.username }}
+                    </span>
+
+                    <form action="{% url 'logout' %}?next=/" method="post" class="m-0 p-0">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                            Logout
+                        </button>
+                    </form>
+
+                {% else %}
+                    <a href="{% url 'login' %}?next=/" 
+                       class="btn btn-sm btn-success">
+                       Login
+                    </a>
                 {% endif %}
 
-                <form action="{% url 'search_books' %}" method="get" class="d-flex ms-auto">
-                    <input type="text" name="q" placeholder="Search books..." required 
-                        class="form-control form-control-sm me-2" style="width:200px;">
-                    <button type="submit" class="btn btn-primary btn-sm">Search</button>
-                </form>
-            </nav>
-                <div class="ms-auto d-flex align-items-center gap-2">
-                    {% if user.is_authenticated %}
-                        <span>{{ user.username }}</span>
+            </div>
 
-                        <form action="{% url 'logout' %}?next=/" method="post">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-sm btn-outline-danger">Logout</button>
-                        </form>
-                    {% else %}
-                        <span>Not Logged In</span>
-                        <a href="{% url 'login' %}?next=/" class="btn btn-sm btn-primary">Login</a>
-                    {% endif %}
-                </div>
-        </nav>
-    </header>
+        </div>
+
+    </nav>
+
+</header>
+
 
     <div class="container">
 
